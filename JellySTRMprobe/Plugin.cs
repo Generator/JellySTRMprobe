@@ -27,10 +27,10 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     }
 
     /// <inheritdoc />
-    public override string Name => "JellySTRMprobe";
+    public override string Name => "strmprobe";
 
     /// <inheritdoc />
-    public override Guid Id => Guid.Parse("b8f5e3a1-d4c7-4f2e-9a6b-1c8d3e5f7a9b");
+    public override Guid Id => Guid.Parse("f203eaa8-4a6f-46b5-a9c4-eebbbd68a787");
 
     /// <summary>
     /// Gets the current plugin instance.

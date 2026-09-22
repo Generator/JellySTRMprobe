@@ -9,6 +9,7 @@ using JellySTRMprobe.Service;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
+using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -456,6 +457,54 @@ public class ProbeServiceTests
         var result = _probeService.GetUnprobedItems(Array.Empty<Guid>());
 
         result.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void GetUnprobedItems_IncludesSubtitleOnlyStrm()
+    {
+        var subtitleOnly = TestHelpers.CreateTestItemWithStreams(
+            "Subtitle-only STRM",
+            "/media/subs.strm",
+            new MediaStream { Type = MediaStreamType.Subtitle },
+            new MediaStream { Type = MediaStreamType.Subtitle });
+
+        SetupItemIds(subtitleOnly);
+
+        var result = _probeService.GetUnprobedItems(Array.Empty<Guid>());
+
+        result.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void GetUnprobedItems_SkipsStrmWithVideoStream()
+    {
+        var probed = TestHelpers.CreateTestItemWithStreams(
+            "Probed STRM",
+            "/media/probed.strm",
+            new MediaStream { Type = MediaStreamType.Video },
+            new MediaStream { Type = MediaStreamType.Audio },
+            new MediaStream { Type = MediaStreamType.Subtitle });
+
+        SetupItemIds(probed);
+
+        var result = _probeService.GetUnprobedItems(Array.Empty<Guid>());
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetUnprobedItems_SkipsStrmWithAudioOnlyStream()
+    {
+        var audioOnly = TestHelpers.CreateTestItemWithStreams(
+            "Audio-only STRM",
+            "/media/audio.strm",
+            new MediaStream { Type = MediaStreamType.Audio });
+
+        SetupItemIds(audioOnly);
+
+        var result = _probeService.GetUnprobedItems(Array.Empty<Guid>());
+
+        result.Should().BeEmpty();
     }
 
     [Fact]

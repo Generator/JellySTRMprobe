@@ -12,6 +12,14 @@ namespace JellySTRMprobe.Service;
 public interface IProbeService
 {
     /// <summary>
+    /// Determines whether an item needs probing: a .strm file without
+    /// video or audio streams. Subtitle-only items still need probing.
+    /// </summary>
+    /// <param name="item">The item to check.</param>
+    /// <returns>True if the item is a .strm lacking video and audio streams.</returns>
+    bool IsUnprobed(BaseItem item);
+
+    /// <summary>
     /// Gets all unprobed STRM items from the specified libraries.
     /// </summary>
     /// <param name="selectedLibraryIds">Library IDs to filter by. Empty array means all libraries.</param>

@@ -15,14 +15,14 @@ public class PluginTests
     [Fact]
     public void Plugin_HasCorrectName()
     {
-        Plugin.Instance.Name.Should().Be("JellySTRMprobe");
+        Plugin.Instance.Name.Should().Be("strmprobe");
     }
 
     [Fact]
     public void Plugin_HasValidGuid()
     {
         Plugin.Instance.Id.Should().NotBe(Guid.Empty);
-        Plugin.Instance.Id.Should().Be(Guid.Parse("b8f5e3a1-d4c7-4f2e-9a6b-1c8d3e5f7a9b"));
+        Plugin.Instance.Id.Should().Be(Guid.Parse("f203eaa8-4a6f-46b5-a9c4-eebbbd68a787"));
     }
 
     [Fact]

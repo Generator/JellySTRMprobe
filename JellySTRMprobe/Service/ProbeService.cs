@@ -49,6 +49,15 @@ public class ProbeService : IProbeService
     }
 
     /// <inheritdoc />
+    public bool IsUnprobed(BaseItem item)
+    {
+        return item.Path != null
+            && item.Path.EndsWith(".strm", StringComparison.OrdinalIgnoreCase)
+            && !item.GetMediaStreams().Any(s =>
+                s.Type == MediaStreamType.Video || s.Type == MediaStreamType.Audio);
+    }
+
+    /// <inheritdoc />
     public IReadOnlyList<BaseItem> GetUnprobedItems(Guid[] selectedLibraryIds)
     {
         // Jellyfin 10.11.x EF Core: TopParentIds and MediaTypes filters return 0
@@ -86,9 +95,7 @@ public class ProbeService : IProbeService
 
             totalResolved++;
 
-            if (item.Path != null
-                && item.Path.EndsWith(".strm", StringComparison.OrdinalIgnoreCase)
-                && item.GetMediaStreams().Count == 0)
+            if (IsUnprobed(item))
             {
                 unprobedItems.Add(item);
             }

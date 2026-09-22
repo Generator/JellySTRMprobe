@@ -1,0 +1,85 @@
+name: '📦 Release Plugin'
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  REPO: ${{ github.repository }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Parse tag
+        id: tag
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Releasing version: $TAG"
+
+      - name: Extract changelog from tag
+        id: changelog
+        run: |
+          # The annotated tag message (see AGENTS.md "Git tags with changelog")
+          # is the canonical changelog for this release.
+          git fetch --tags --force origin
+          BODY="$(git tag -l --format='%(contents)' "v${{ steps.tag.outputs.version }}")"
+          if [ -z "$BODY" ]; then
+            BODY="Release ${{ steps.tag.outputs.version }}"
+          fi
+          {
+            echo "body<<_PLUGIN_CHANGELOG_EOF_"
+            printf '%s\n' "$BODY"
+            echo "_PLUGIN_CHANGELOG_EOF_"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build & Package
+        env:
+          RELEASE_CHANGELOG: ${{ steps.changelog.outputs.body }}
+        run: |
+          # Build the plugin zip. The manifest.json written by package.py is
+          # not used here — the repo_manifest.py step below regenerates
+          # manifest.json on gh-pages from the GitHub releases and build.yaml.
+          python3 scripts/package.py \
+            --version "${{ steps.tag.outputs.version }}" \
+            --repo "${{ env.REPO }}" \
+            --changelog "$RELEASE_CHANGELOG"
+
+      - name: Generate md5 checksum
+        run: md5sum artifacts/strmprobe.zip > artifacts/strmprobe.zip.md5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-release
+          path: artifacts/*.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          body: ${{ steps.changelog.outputs.body }}
+
+      - name: Generate plugin repository manifest (patched for numeric versions)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          pip install pyyaml -q
+          python3 scripts/repo_manifest.py

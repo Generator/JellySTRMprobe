@@ -1,6 +1,6 @@
 var JellySTRMprobeConfig = {
 
-    pluginUniqueId: 'b8f5e3a1-d4c7-4f2e-9a6b-1c8d3e5f7a9b',
+    pluginUniqueId: 'f203eaa8-4a6f-46b5-a9c4-eebbbd68a787',
 
     loadConfig: function () {
         var self = this;

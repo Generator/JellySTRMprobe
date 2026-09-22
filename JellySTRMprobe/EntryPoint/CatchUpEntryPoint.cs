@@ -119,14 +119,14 @@ public class CatchUpEntryPoint : IHostedService, IDisposable
             return;
         }
 
-        // Filter out items that already have media streams
+        // Filter out items that already have video/audio streams (subtitle-only still needs probing)
         var unprobed = items
-            .Where(item => item.GetMediaStreams().Count == 0)
+            .Where(item => _probeService.IsUnprobed(item))
             .ToList();
 
         if (unprobed.Count == 0)
         {
-            _logger.LogDebug("Catch-up: all {Count} queued items already have media streams", items.Count);
+            _logger.LogDebug("Catch-up: all {Count} queued items already have video/audio streams", items.Count);
             return;
         }
 

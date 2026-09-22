@@ -41,8 +41,16 @@ internal static class TestHelpers
     /// </summary>
     public static BaseItem CreateTestItem(string name, string? path = null)
     {
+        return CreateTestItemWithStreams(name, path);
+    }
+
+    /// <summary>
+    /// Creates a BaseItem mock with the given media streams.
+    /// </summary>
+    public static BaseItem CreateTestItemWithStreams(string name, string? path, params MediaStream[] streams)
+    {
         var mock = new Mock<BaseItem>() { CallBase = true };
-        mock.Setup(m => m.GetMediaStreams()).Returns(new List<MediaStream>());
+        mock.Setup(m => m.GetMediaStreams()).Returns(new List<MediaStream>(streams));
         mock.Object.Name = name;
         mock.Object.Path = path;
         mock.Object.Id = Guid.NewGuid();

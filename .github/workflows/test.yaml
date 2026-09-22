@@ -1,20 +1,42 @@
-name: "Test Plugin"
+name: '🧪 Test Plugin'
 
 on:
   push:
     branches:
-      - master
+      - dev
     paths-ignore:
-      - "**/*.md"
+      - 'manifest.json'
   pull_request:
     branches:
-      - master
+      - dev
     paths-ignore:
-      - "**/*.md"
+      - 'manifest.json'
   workflow_dispatch:
 
 jobs:
-  call:
-    uses: jellyfin/jellyfin-meta-plugins/.github/workflows/test.yaml@master
-    with:
-      dotnet-version: 9.0.x
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ['10.0.x']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Build Plugin
+        run: dotnet build -c Release JellySTRMprobe/JellySTRMprobe.csproj
+
+      - name: Test Plugin
+        run: dotnet test -c Release --no-build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-build-net${{ matrix.dotnet-version }}
+          path: |
+            JellySTRMprobe/bin/Release/net*/JellySTRMprobe.dll
+            JellySTRMprobe/bin/Release/net*/JellySTRMprobe.pdb
+          retention-days: 14
