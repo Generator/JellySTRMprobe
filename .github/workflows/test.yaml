@@ -27,7 +27,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Build Plugin
-        run: dotnet build -c Release JellySTRMprobe/JellySTRMprobe.csproj
+        run: dotnet build -c Release JellySTRMprobe.slnx
 
       - name: Test Plugin
         run: dotnet test -c Release --no-build
