@@ -116,7 +116,7 @@ ProbeStrmTask.ExecuteAsync()
     ├─ ProbeService.GetUnprobedItems()
     │   ├─ ILibraryManager.GetItemList(MediaType.Video, Recursive)
     │   ├─ Filter: path.EndsWith(".strm")
-    │   └─ Filter: GetMediaStreams().Count == 0
+    │   └─ Filter: no Video/Audio streams (subtitle-only counts as unprobed)
     │
     ├─ ProbeService.ProbeBatchAsync(items, parallelism, timeout, cooldown)
     │   ├─ Parallel.ForEachAsync(parallelism) controls concurrency
@@ -150,7 +150,7 @@ CatchUpEntryPoint.StartAsync()
             │
             └─ Timer fires:
                 ├─ Drain queue to List
-                ├─ Filter: GetMediaStreams().Count == 0
+                ├─ Filter: no Video/Audio streams (subtitle-only counts as unprobed)
                 └─ ProbeService.ProbeBatchAsync(items, ...)
 ```
 
@@ -235,7 +235,7 @@ to avoid per-item allocation overhead.
 
 | Component | Version |
 |-----------|---------|
-| .NET | 9.0 |
-| Jellyfin.Controller | 10.11.0 |
-| Jellyfin.Model | 10.11.0 |
+| .NET | 10.0 |
+| Jellyfin.Controller | 12.0.0 |
+| Jellyfin.Model | 12.0.0 |
 | StyleCop.Analyzers | 1.2.0-beta.556 |

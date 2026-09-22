@@ -15,11 +15,12 @@
 
 | ID | Test Case | Setup | Expected |
 |----|-----------|-------|----------|
-| TC-1.1.1 | Returns only STRM items with no media streams | 3 items: .strm/0 streams, .strm/2 streams, .mkv/0 streams | Returns only the first item |
+| TC-1.1.1 | Returns only STRM items with no video/audio streams | 4 items: .strm/0 streams, .strm/2 subtitle streams, .strm/video+audio streams, .mkv/0 streams | Returns the first two items |
 | TC-1.1.2 | Filters by selected library IDs | 2 items in lib A, 1 item in lib B, selected = [A] | Returns only 2 items from lib A |
 | TC-1.1.3 | Returns all libraries when selection is empty | Items in multiple libraries, selection = [] | Returns all unprobed STRM items |
-| TC-1.1.4 | Returns empty list when no unprobed items | All items have media streams | Returns empty list |
+| TC-1.1.4 | Returns empty list when no unprobed items | All items have video/audio streams | Returns empty list |
 | TC-1.1.5 | Handles null path gracefully | Item with null path in results | Skips item, no exception |
+| TC-1.1.6 | Skips STRM items with audio-only streams | .strm item with 1 audio stream | Item excluded |
 
 #### 1.2 ProbeItemAsync
 
@@ -63,7 +64,7 @@
 | TC-3.4 | Ignores non-STRM items | Add event with .mkv path | Queue remains empty |
 | TC-3.5 | Debounces processing (30 seconds) | Add 3 items within 1 second | ProcessQueue not called until 30s after last add |
 | TC-3.6 | Processes all queued items in batch | Queue 5 items, timer fires | ProbeBatchAsync called with 5 items |
-| TC-3.7 | Filters already-probed items before processing | Queue item that already has media streams | Item excluded from ProbeBatchAsync call |
+| TC-3.7 | Filters already-probed items before processing | Queue item that already has video/audio streams | Item excluded from ProbeBatchAsync call |
 | TC-3.8 | Dispose unsubscribes from events | Call Dispose() | ItemAdded event handler removed |
 
 ### 4. PluginConfiguration Tests
@@ -79,7 +80,7 @@
 
 | ID | Test Case | Setup | Expected |
 |----|-----------|-------|----------|
-| TC-5.1 | Plugin has correct name | — | Name == "JellySTRMprobe" |
+| TC-5.1 | Plugin has correct name | — | Name == "strmprobe" |
 | TC-5.2 | Plugin has valid GUID | — | Id is a valid, non-empty Guid |
 | TC-5.3 | Plugin returns config pages | — | GetPages() returns config.html and config.js |
 

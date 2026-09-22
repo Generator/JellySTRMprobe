@@ -38,7 +38,7 @@ if (!item.IsShortcut || options.EnableRemoteContentProbe)
 |----|-------------|
 | FR-1.1 | The plugin SHALL register a scheduled task visible in Dashboard > Scheduled Tasks |
 | FR-1.2 | The task SHALL query all video items in configured libraries |
-| FR-1.3 | The task SHALL filter for items with `.strm` file extension AND zero media streams |
+| FR-1.3 | The task SHALL filter for items with `.strm` file extension AND no video/audio streams (subtitle-only items count as unprobed) |
 | FR-1.4 | The task SHALL call `IProviderManager.RefreshSingleItem()` with `EnableRemoteContentProbe = true` for each unprobed item |
 | FR-1.5 | The task SHALL support parallel probing with configurable concurrency (default: 5) |
 | FR-1.6 | The task SHALL report progress to Jellyfin's task system (0-100%) |
@@ -76,7 +76,7 @@ if (!item.IsShortcut || options.EnableRemoteContentProbe)
 | FR-4.1 | Probing SHALL NOT replace existing metadata (title, year, description, etc.) |
 | FR-4.2 | Probing SHALL NOT replace existing images (posters, backdrops, etc.) |
 | FR-4.3 | Probing SHALL only add/update media stream information (video, audio, subtitle streams) |
-| FR-4.4 | Items that already have media streams SHALL be skipped |
+| FR-4.4 | Items that already have video/audio streams SHALL be skipped |
 
 ## Non-Functional Requirements
 
@@ -101,8 +101,8 @@ if (!item.IsShortcut || options.EnableRemoteContentProbe)
 
 | ID | Requirement |
 |----|-------------|
-| NFR-3.1 | Target: .NET 9.0 |
-| NFR-3.2 | Target: Jellyfin 10.11.0+ |
+| NFR-3.1 | Target: .NET 10.0 |
+| NFR-3.2 | Target: Jellyfin 12.0+ |
 | NFR-3.3 | The plugin SHALL work alongside other Jellyfin plugins without conflicts |
 | NFR-3.4 | The plugin SHALL work with any STRM URL format (HTTP, HTTPS, local file paths) |
 

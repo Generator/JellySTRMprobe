@@ -1,4 +1,4 @@
-# JellySTRMprobe
+# strmprobe
 
 A Jellyfin plugin that extracts media information from STRM files by probing remote streams.
 
@@ -21,7 +21,7 @@ The plugin calls Jellyfin's internal `RefreshSingleItem()` with `EnableRemoteCon
 
 ### Scheduled Task
 A scheduled task (Dashboard > Scheduled Tasks > **Probe STRM Media Info**) that:
-- Finds all STRM items with no media stream data
+- Finds all STRM items with no video/audio stream data (subtitle-only items included)
 - Probes them in parallel with configurable concurrency
 - Runs daily at 4:00 AM by default (customizable)
 - Reports progress and is cancellable from the Dashboard
@@ -33,7 +33,7 @@ Automatically probes new STRM items as they're added during library scans:
 - Enabled by default (can be disabled in settings)
 
 ### Configuration
-All settings are accessible from Dashboard > Plugins > JellySTRMprobe:
+All settings are accessible from Dashboard > Plugins > strmprobe:
 
 | Setting | Default | Range | Description |
 |---------|---------|-------|-------------|
@@ -41,6 +41,8 @@ All settings are accessible from Dashboard > Plugins > JellySTRMprobe:
 | Parallelism | 5 | 1–20 | Concurrent probe operations |
 | Timeout | 60s | 10–300s | Per-item probe timeout |
 | Cooldown | 200ms | 0–5000ms | Delay between probes (prevents upstream overload) |
+| Delete failed STRMs | Disabled | On/Off | Remove STRM files that fail to probe (recreated on next sync) |
+| Failure threshold | 10% | 1–100% | Skip deletion above this failure rate (provider may be down) |
 | Libraries | All | Multi-select | Which libraries to probe |
 
 ## Installation
@@ -50,24 +52,25 @@ All settings are accessible from Dashboard > Plugins > JellySTRMprobe:
 1. In Jellyfin, go to **Dashboard > Plugins > Repositories**
 2. Add repository URL:
    ```
-   https://firestaerter3.github.io/jellyfin-plugin-repo/manifest.json
+   https://generator.github.io/JellySTRMprobe/manifest.json
    ```
-3. Go to **Catalog**, find **JellySTRMprobe**, and install
+3. Go to **Catalog**, find **strmprobe**, and install
 4. Restart Jellyfin
 
 ### Manual Installation
 
-1. Download the latest release from [Releases](https://github.com/firestaerter3/JellySTRMprobe/releases)
-2. Extract `JellySTRMprobe.dll` to your Jellyfin plugins directory:
+1. Download the latest release from [Releases](https://github.com/Generator/JellySTRMprobe/releases)
+2. Extract `strmprobe.zip` (contains `JellySTRMprobe.dll` + `meta.json`) into a versioned folder in your Jellyfin plugins directory:
    ```
-   <jellyfin-data>/plugins/JellySTRMprobe/JellySTRMprobe.dll
+   <jellyfin-data>/plugins/strmprobe_1.3.0.0/JellySTRMprobe.dll
+   <jellyfin-data>/plugins/strmprobe_1.3.0.0/meta.json
    ```
 3. Restart Jellyfin
 
 ## Requirements
 
-- Jellyfin **10.11.0** or later
-- .NET 9.0
+- Jellyfin **12.0** or later
+- .NET 10.0
 
 ## Building from Source
 
